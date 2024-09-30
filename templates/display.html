@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Processed Image</title>
+</head>
+<body>
+    <h1>Processed Image</h1>
+    <img src="{{ url_for('processed_file', filename=filename) }}" alt="Processed Image" style="max-width:100%;">
+    <form action="/display/{{ filename }}" method="post">
+        <input type="submit" name="action" value="save">
+        <input type="submit" name="action" value="discard">
+    </form>
+</body>
+</html>

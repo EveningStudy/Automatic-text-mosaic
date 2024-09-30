@@ -4,7 +4,7 @@ from utils import getBox
 
 
 def common(image, padding, lang):
-    h_list, v_list = detect.detectBox(image,lang)
+    h_list, v_list = detect.detectBox(image, lang)
     for box in h_list:
         x1, y1, x2, y2, roi_height, roi_width, ma_size, roi = getBox.getTextbox(image, box, padding)
 
