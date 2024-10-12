@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Text Region</title>
+</head>
+<body>
+    <h1>Select a Text Region to Apply Mosaic</h1>
+    <div>
+        <img id="image" src="{{ url_for('processed_file', filename=filename) }}" alt="Text Regions" style="max-width: 100%;">
+    </div>
+
+    <script>
+        document.getElementById('image').addEventListener('click', function(event) {
+            const rect = this.getBoundingClientRect();
+            const x = event.clientX - rect.left;
+            const y = event.clientY - rect.top;
+
+            fetch('/mosaic', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    x: x,
+                    y: y,
+                    filename: '{{ filename }}',
+                    mosaic_type: '{{ mosaic_type }}'
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('image').src = document.getElementById('image').src + '?' + new Date().getTime();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -3,14 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Processed Image</title>
+    <title>Display Image</title>
+    <style>
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
 </head>
 <body>
-    <h1>Processed Image</h1>
-    <img src="{{ url_for('processed_file', filename=filename) }}" alt="Processed Image" style="max-width:100%;">
-    <form action="/display/{{ filename }}" method="post">
-        <input type="submit" name="action" value="save">
-        <input type="submit" name="action" value="discard">
-    </form>
+    <h1>Click on the image to blur text</h1>
+    <img id="image" src="{{ url_for('processed_file', filename=filename) }}" alt="Processed Image" onclick="getClickPosition(event)">
+
+    <script>
+        function getClickPosition(event) {
+            const img = document.getElementById('image');
+            const rect = img.getBoundingClientRect();
+
+            const scaleX = img.naturalWidth / rect.width;
+            const scaleY = img.naturalHeight / rect.height;
+
+            const x = (event.clientX - rect.left) * scaleX;
+            const y = (event.clientY) * scaleY;
+
+            fetch(`/mosaic`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ x: x, y: y, filename: '{{ filename }}' })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    img.src = img.src + '?t=' + new Date().getTime();
+                } else {
+                    alert(data.error);
+                }
+            });
+        }
+    </script>
 </body>
 </html>

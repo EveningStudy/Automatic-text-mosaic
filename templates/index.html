@@ -1,20 +1,26 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Upload Image</title>
 </head>
 <body>
-    <h1>Upload Image</h1>
-    <form method="POST" enctype="multipart/form-data">
-        <label for="mode">Select Mode:</label>
-        <select name="mode" id="mode">
-            <option value="automatic">Automatic</option>
-            <option value="manual">Manual</option>
-        </select>
-        <br><br>
-        <input type="file" name="file">
-        <br><br>
-        <button type="submit">Upload Image</button>
+    <h1>Upload an Image</h1>
+    <form method="post" enctype="multipart/form-data">
+        <input type="file" name="file" accept="image/*"><br><br>
+        <label for="mosaic_type">Select Mosaic Type:</label>
+        <select id="mosaic_type" name="mosaic_type">
+            <option value="GaussianBlur">GaussianBlur</option>
+            <option value="Pixelate">Pixelate</option>
+            <option value="ColorBlock">ColorBlock</option>
+
+        </select><br><br>
+        <label for="color">Select Color for ColorBlock:</label>
+        <input type="color" id="color" name="color" value="#000000"><br><br>
+
+        <button type="submit" name="action" value="automatic">Automatic Mosaic</button>
+        <button type="submit" name="action" value="manual">Manual Mosaic</button>
     </form>
 </body>
 </html>
