@@ -12,34 +12,13 @@
     </style>
 </head>
 <body>
-    <h1>Click on the image to blur text</h1>
-    <img id="image" src="{{ url_for('processed_file', filename=filename) }}" alt="Processed Image" onclick="getClickPosition(event)">
+    <h1>Processed Image</h1>
+    <img id="image" src="{{ url_for('processed_file', filename=filename) }}" alt="Processed Image">
 
-    <script>
-        function getClickPosition(event) {
-            const img = document.getElementById('image');
-            const rect = img.getBoundingClientRect();
-
-            const scaleX = img.naturalWidth / rect.width;
-            const scaleY = img.naturalHeight / rect.height;
-
-            const x = (event.clientX - rect.left) * scaleX;
-            const y = (event.clientY) * scaleY;
-
-            fetch(`/mosaic`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ x: x, y: y, filename: '{{ filename }}' })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    img.src = img.src + '?t=' + new Date().getTime();
-                } else {
-                    alert(data.error);
-                }
-            });
-        }
-    </script>
+    <!-- Save and Discard form -->
+    <form method="POST">
+        <button type="submit" name="action" value="save">Save Image</button>
+        <button type="submit" name="action" value="discard">Discard Image</button>
+    </form>
 </body>
 </html>

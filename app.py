@@ -42,10 +42,10 @@ def upload_image():
 
             color_hex = request.form.get('color', '#000000')
             color_rgb = tuple(int(color_hex[i:i + 2], 16) for i in (1, 3, 5))  # 转换为RGB
-
-            image_with_boxes = draw_boxes(file_path, detected_boxes)
+            image = cv2.imread(file_path)
+            # image_with_boxes = draw_boxes(file_path, detected_boxes)
             processed_path = os.path.join(app.config['PROCESSED_FOLDER'], 'boxed_' + filename)
-            cv2.imwrite(processed_path, image_with_boxes)
+            cv2.imwrite(processed_path, image)
 
             box_data_path = os.path.join(app.config['PROCESSED_FOLDER'], 'boxes_' + filename + '.npy')
             np.save(box_data_path, detected_boxes)
@@ -72,30 +72,48 @@ def select_text_region(filename):
     return render_template('select.html', filename=filename, mosaic_type=mosaic_type)
 
 
+
+
 @app.route('/mosaic', methods=['POST'])
 def mosaic_text_region():
-    # 获取用户点击的坐标
     x = int(request.json['x'])
     y = int(request.json['y'])
     filename = request.json['filename']
     mosaic_type = request.json.get('mosaic_type', 'GaussianBlur')
 
     processed_path = os.path.join(app.config['PROCESSED_FOLDER'], filename)
-
     box_data_path = os.path.join(app.config['PROCESSED_FOLDER'], 'boxes_' + filename.replace('boxed_', '') + '.npy')
     detected_boxes = np.load(box_data_path, allow_pickle=True)
+
+    image = cv2.imread(processed_path)
+    original_height, original_width = image.shape[:2]
+
+    scaled_width = request.json['displayed_width']
+    scaled_height = request.json['displayed_height']
+
+    scale_x = original_width / scaled_width
+    scale_y = original_height / scaled_height
+
+    adjusted_x = int(x * scale_x)
+    adjusted_y = int(y * scale_y)
 
     for box in detected_boxes:
         box = np.int0(box).reshape((-1, 2))
         x_min, y_min = np.min(box[:, 0]), np.min(box[:, 1])
         x_max, y_max = np.max(box[:, 0]), np.max(box[:, 1])
-
-        if x_min <= x <= x_max and (y_min - 32) <= y <= (y_max - 32):
+        if x_min <= adjusted_x <= x_max and y_min <= adjusted_y <= y_max:
             image = getattr(mosaicType, mosaic_type)(processed_path, [box])
             cv2.imwrite(processed_path, image)
             break
-
     return jsonify({'success': True})
+
+
+@app.route('/save_manual_image/<filename>', methods=['GET'])
+def save_manual_image(filename):
+    processed_path = os.path.join(app.config['PROCESSED_FOLDER'], filename)
+
+    return send_from_directory(app.config['PROCESSED_FOLDER'], filename, as_attachment=True)
+
 
 
 @app.route('/display/<filename>', methods=['GET', 'POST'])
@@ -105,7 +123,8 @@ def display_image(filename):
         processed_path = os.path.join(app.config['PROCESSED_FOLDER'], filename)
 
         if action == 'save':
-            return "Image saved successfully! You can download it from the processed folder."
+            # Download the processed image
+            return send_from_directory(app.config['PROCESSED_FOLDER'], filename, as_attachment=True)
         elif action == 'discard':
             os.remove(processed_path)
             return "Image discarded!"

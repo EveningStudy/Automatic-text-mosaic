@@ -10,12 +10,16 @@
     <div>
         <img id="image" src="{{ url_for('processed_file', filename=filename) }}" alt="Text Regions" style="max-width: 100%;">
     </div>
+    <button id="save-button">Save Image</button>
 
     <script>
         document.getElementById('image').addEventListener('click', function(event) {
-            const rect = this.getBoundingClientRect();
+            const imageElement = this;
+            const rect = imageElement.getBoundingClientRect();
             const x = event.clientX - rect.left;
             const y = event.clientY - rect.top;
+            const displayedWidth = imageElement.clientWidth;
+            const displayedHeight = imageElement.clientHeight;
 
             fetch('/mosaic', {
                 method: 'POST',
@@ -26,7 +30,9 @@
                     x: x,
                     y: y,
                     filename: '{{ filename }}',
-                    mosaic_type: '{{ mosaic_type }}'
+                    mosaic_type: '{{ mosaic_type }}',
+                    displayed_width: displayedWidth,
+                    displayed_height: displayedHeight
                 })
             })
             .then(response => response.json())
@@ -34,6 +40,21 @@
                 if (data.success) {
                     document.getElementById('image').src = document.getElementById('image').src + '?' + new Date().getTime();
                 }
+            });
+        });
+
+        document.getElementById('save-button').addEventListener('click', function() {
+            fetch(`/save_manual_image/{{ filename }}`)
+            .then(response => response.blob())
+            .then(blob => {
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.style.display = 'none';
+                a.href = url;
+                a.download = 'mosaiced_image.png';
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
             });
         });
     </script>
