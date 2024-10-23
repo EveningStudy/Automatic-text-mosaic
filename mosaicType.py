@@ -6,7 +6,7 @@ def GaussianBlur(image_path, boxes, ksize=(25, 25)):
     image = cv2.imread(image_path)
 
     for box in boxes:
-        box = np.int0(box).reshape((-1, 2))
+        box = np.int32(box).reshape((-1, 2))
 
         x_min, y_min = np.min(box[:, 0]), np.min(box[:, 1])
         x_max, y_max = np.max(box[:, 0]), np.max(box[:, 1])
@@ -22,7 +22,7 @@ def Pixelate(image_path, boxes, pixel_size=(10, 10)):
     image = cv2.imread(image_path)
 
     for box in boxes:
-        box = np.int0(box).reshape((-1, 2))
+        box = np.int32(box).reshape((-1, 2))
 
         x_min, y_min = np.min(box[:, 0]), np.min(box[:, 1])
         x_max, y_max = np.max(box[:, 0]), np.max(box[:, 1])
@@ -43,7 +43,7 @@ def ColorBlock(image_path, boxes, color=(0, 0, 0)):
     image = cv2.imread(image_path)
 
     for box in boxes:
-        box = np.int0(box).reshape((-1, 2))
+        box = np.int32(box).reshape((-1, 2))
 
         x_min, y_min = np.min(box[:, 0]), np.min(box[:, 1])
         x_max, y_max = np.max(box[:, 0]), np.max(box[:, 1])

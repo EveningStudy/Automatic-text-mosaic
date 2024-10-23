@@ -4,15 +4,71 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Select Text Region</title>
+    <!-- 引入black-dashboard的样式 -->
+    <link rel="stylesheet" href="path/to/black-dashboard.min.css">
+    <style>
+        /* 全局样式 */
+        body {
+            background-color: #1e1e2f; /* 深色背景 */
+            font-family: 'Montserrat', sans-serif;
+            color: #ffffff; /* 白色文本 */
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column; /* 垂直居中布局 */
+        }
+
+        h1 {
+            color: #f96332; /* Neon 橙色/粉色标题 */
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        div {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            border: 3px solid #f96332; /* Neon 样式的边框 */
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(249, 99, 50, 0.5); /* 图片阴影 */
+        }
+
+        /* 保存按钮的样式 */
+        #save-button {
+            width: 200px;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            background: linear-gradient(135deg, #f96332, #fc5185); /* 按钮的渐变色 */
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s;
+            text-align: center;
+        }
+
+        #save-button:hover {
+            background: linear-gradient(135deg, #fc5185, #f96332); /* 悬停效果 */
+        }
+    </style>
 </head>
 <body>
     <h1>Select a Text Region to Apply Mosaic</h1>
+
     <div>
-        <img id="image" src="{{ url_for('processed_file', filename=filename) }}" alt="Text Regions" style="max-width: 100%;">
+        <img id="image" src="{{ url_for('processed_file', filename=filename) }}" alt="Text Regions">
     </div>
+
     <button id="save-button">Save Image</button>
 
     <script>
+        // 点击图片以选择马赛克区域
         document.getElementById('image').addEventListener('click', function(event) {
             const imageElement = this;
             const rect = imageElement.getBoundingClientRect();
@@ -21,6 +77,7 @@
             const displayedWidth = imageElement.clientWidth;
             const displayedHeight = imageElement.clientHeight;
 
+            // 发送点击位置的数据到后端以应用马赛克
             fetch('/mosaic', {
                 method: 'POST',
                 headers: {
@@ -38,11 +95,13 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
+                    // 刷新图片以显示应用的马赛克效果
                     document.getElementById('image').src = document.getElementById('image').src + '?' + new Date().getTime();
                 }
             });
         });
 
+        // 保存图片功能
         document.getElementById('save-button').addEventListener('click', function() {
             fetch(`/save_manual_image/{{ filename }}`)
             .then(response => response.blob())

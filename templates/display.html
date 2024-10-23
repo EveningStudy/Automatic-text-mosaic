@@ -4,18 +4,69 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Display Image</title>
+    <!-- 引入black-dashboard的样式 -->
+    <link rel="stylesheet" href="/static/black-dashboard.min.css">
     <style>
+        /* 全局样式 */
+        body {
+            background-color: #1e1e2f; /* 深色背景 */
+            font-family: 'Montserrat', sans-serif;
+            color: #ffffff; /* 白色文本 */
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column; /* 垂直居中布局 */
+        }
+
+        h1 {
+            color: #f96332; /* Neon 橙色/粉色标题 */
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        /* 图片样式 */
         img {
             max-width: 100%;
             height: auto;
+            border: 3px solid #f96332; /* 添加边框以增强图片的视觉效果 */
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(249, 99, 50, 0.5); /* 添加图片的阴影 */
+        }
+
+        /* 表单样式 */
+        form {
+            width: 300px;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 5px;
+            background: linear-gradient(135deg, #f96332, #fc5185); /* 按钮的渐变色 */
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background: linear-gradient(135deg, #fc5185, #f96332); /* 悬停时的渐变色 */
         }
     </style>
 </head>
 <body>
     <h1>Processed Image</h1>
+
+    <!-- 显示处理后的图片 -->
     <img id="image" src="{{ url_for('processed_file', filename=filename) }}" alt="Processed Image">
 
-    <!-- Save and Discard form -->
+    <!-- 保存和放弃图片的按钮表单 -->
     <form method="POST">
         <button type="submit" name="action" value="save">Save Image</button>
         <button type="submit" name="action" value="discard">Discard Image</button>

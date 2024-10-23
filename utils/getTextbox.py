@@ -59,7 +59,7 @@ def detect_text(image_path, model_path, device='cpu', text_threshold=0.7, link_t
 def draw_boxes(image_path, boxes):
     image = cv2.imread(image_path)
     for box in boxes:
-        box = np.int0(box)
+        box = np.int32(box)
         cv2.polylines(image, [box.reshape((-1, 1, 2))], isClosed=True, color=(0, 255, 0), thickness=2)
     return image
 
@@ -68,7 +68,7 @@ def blur_text_regions(image_path, boxes, ksize=(25, 25)):
     image = cv2.imread(image_path)
 
     for box in boxes:
-        box = np.int0(box).reshape((-1, 2))
+        box = np.int32(box).reshape((-1, 2))
 
         x_min, y_min = np.min(box[:, 0]), np.min(box[:, 1])
         x_max, y_max = np.max(box[:, 0]), np.max(box[:, 1])

@@ -18,7 +18,7 @@ os.makedirs(PROCESSED_FOLDER, exist_ok=True)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['PROCESSED_FOLDER'] = PROCESSED_FOLDER
 
-model_path = 'D:\\Python_Project\\Masaike\\utils\\craft_mlt_25k.pth'
+model_path = './utils/craft_mlt_25k.pth'
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -98,7 +98,7 @@ def mosaic_text_region():
     adjusted_y = int(y * scale_y)
 
     for box in detected_boxes:
-        box = np.int0(box).reshape((-1, 2))
+        box = np.int32(box).reshape((-1, 2))
         x_min, y_min = np.min(box[:, 0]), np.min(box[:, 1])
         x_max, y_max = np.max(box[:, 0]), np.max(box[:, 1])
         if x_min <= adjusted_x <= x_max and y_min <= adjusted_y <= y_max:
@@ -112,6 +112,7 @@ def mosaic_text_region():
 def save_manual_image(filename):
     processed_path = os.path.join(app.config['PROCESSED_FOLDER'], filename)
 
+    # 将图片发送给用户下载
     return send_from_directory(app.config['PROCESSED_FOLDER'], filename, as_attachment=True)
 
 
