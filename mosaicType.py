@@ -51,3 +51,6 @@ def ColorBlock(image_path, boxes, color=(0, 0, 0)):
         image[y_min:y_max, x_min:x_max] = color
 
     return image
+
+
+

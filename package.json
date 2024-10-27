@@ -1,0 +1,27 @@
+{
+  "name": "electron-flask-app",
+  "version": "1.0.0",
+  "description": "An Electron app with Flask backend",
+  "main": "main.js",
+  "scripts": {
+    "start": "concurrently \"node start-flask.js\" \"electron .\""
+  },
+  "build": {
+    "appId": "com.example.electronflaskapp",
+    "win": {
+      "target": "nsis"
+    },
+    "mac": {
+      "target": "dmg"
+    },
+    "linux": {
+      "target": "AppImage"
+    }
+  },
+  "devDependencies": {
+    "concurrently": "latest",
+    "electron": "latest",
+    "electron-builder": "latest",
+    "wait-on": "latest"
+  }
+}
